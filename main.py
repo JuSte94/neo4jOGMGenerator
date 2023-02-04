@@ -54,8 +54,6 @@ def getArrowGraph() -> dict:
     return arrowGraph
 
 def main() -> None:
-
-    os.system('cmd /c mvn --version')
     nodes = getArrowGraph().get('nodes')
     relationships = getArrowGraph().get('relationships')
     for node in nodes:
