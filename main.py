@@ -24,7 +24,7 @@ IMPORTS = {
         'import lombok.Getter;',
         'import lombok.Setter;',
     ],
-    'relationships' : [
+    'relationship' : [
         'import org.neo4j.ogm.annotation.RelationshipEntity;',
         'import org.neo4j.ogm.annotation.StartNode;',
         'import org.neo4j.ogm.annotation.EndNode;',
@@ -63,13 +63,13 @@ def main() -> None:
                 if(index == 0):
                     # first label is the class name
                     if(len(label.split(':')) > 1):
-                        OGMnode = OGMNode.node(label.split(':')[0])
+                        OGMnode = OGMNode.node(label.split(':')[0], EXPORT_DIR)
                         if(label.split(':')[1].lower() == 'abstract'):
                             OGMnode.abstract = True
                         else:
                             OGMnode.extends = label.split(':')[1].capitalize()
                     else:
-                        OGMnode = OGMNode.node(label)
+                        OGMnode = OGMNode.node(label, EXPORT_DIR)
                 else:
                     # additional labels for the node
                     OGMnode.lables.append(label)
@@ -120,7 +120,7 @@ def main() -> None:
                     OGMnode.relationships.append(relationship)
 
             OGMnode.properties.update(nodes[node].get('properties'))
-            OGMnode.imports = IMPORTS['node'].copy()
+            OGMnode.imports = IMPORTS.copy()
 
             OGMnode.save(EXPORT_DIR + 'Models/', PACKAGENAME)
         else:
