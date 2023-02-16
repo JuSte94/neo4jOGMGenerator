@@ -11,7 +11,7 @@ class node:
     }
     '''
 
-    def __init__(self, nodeName) -> None:
+    def __init__(self, nodeName, EXPORT) -> None:
         self.nodeName = nodeName
         self.abstract = False
         self.imports = []
@@ -19,12 +19,13 @@ class node:
         self.properties = {}
         self.relationships = []
         self.extends = None
+        self.export = EXPORT
 
         self.OGMNode = node.OGMNode
         
     def save(self, location, packagename):
         self.OGMNode = self.OGMNode.replace('<<PACKAGE>>', 'package ' + packagename + ';\n')
-        self.OGMNode = self.OGMNode.replace('<<IMPORTS>>', str('\n'.join(self.imports)))
+        self.OGMNode = self.OGMNode.replace('<<IMPORTS>>', str('\n'.join(self.imports.get('node'))))
         self.OGMNode = self.OGMNode.replace('<<ACCESS>>', 'public')
         if(self.abstract == True):
             self.OGMNode = self.OGMNode.replace('<<ABSTRACT>>','abstract')
@@ -53,8 +54,8 @@ class node:
         relationships = ''''''
         for relationship in self.relationships:
             if('startNode' in relationship and 'endNode' in relationship):
-                # complex Relationship with additional properties on the edge
-                pass
+                ogmRelationship = OGMRelationship.relationship(relationship.get('startNode'), relationship.get('endNode'), relationship.get('type').split(':')[0], relationship.get('properties'), self.imports.get('relationship'))
+                ogmRelationship.save(self.export + 'relationships/' + self.nodeName + '/')
             else:
                 if(relationship.get('list') == True):
                     relationships += '@Relationship(type="' + relationship.get('type').split(':')[0] + '", direction="OUTGOING")\n\t\tprivate List<' + relationship.get('endNode') + '> ' + relationship.get('endNode')
